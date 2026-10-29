@@ -24,6 +24,8 @@
             --radius-lg: 16px;
             --radius-md: 10px;
             --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --star-gold: #ffc107;
+            --star-empty: #475569;
         }
 
         * {
@@ -288,6 +290,53 @@
             margin-bottom: 40px;
         }
 
+        /* ОБНОВЛЕННЫЕ СТИЛИ РЕЙТИНГА С HOVER-ЭФФЕКТОМ */
+        .rating-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stars-container {
+            display: inline-flex;
+            gap: 3px;
+            direction: ltr;
+        }
+
+        .star {
+            font-size: 20px;
+            color: var(--star-empty);
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+            user-select: none;
+        }
+
+        .star.filled {
+            color: var(--star-gold);
+        }
+
+        .star.hovered {
+            color: var(--star-gold) !important;
+            transform: scale(1.2);
+        }
+
+        .star:hover {
+            transform: scale(1.25);
+        }
+
+        .rating-value {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            margin-left: 4px;
+        }
+
+        .rating-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         /* Каталог автомобилей (СТРАНИЦА 1) */
         .catalog {
             display: grid;
@@ -342,7 +391,7 @@
         .car-title {
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: #fff;
             transition: color 0.3s ease;
         }
@@ -355,7 +404,7 @@
             font-size: 22px;
             color: var(--primary-color);
             font-weight: 800;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             transition: transform 0.3s ease;
             display: inline-block;
         }
@@ -965,6 +1014,7 @@
             --text-muted: #64748b;
             --border-color: rgba(15, 23, 42, 0.12);
             --shadow-soft: 0 12px 30px -14px rgba(15, 23, 42, 0.2);
+            --star-empty: #cbd5e1;
         }
 
         :root[data-theme="light"] .tab-bar,
@@ -1017,7 +1067,8 @@
         :root[data-theme="light"] .car-title,
         :root[data-theme="light"] .car-specs li span:last-child,
         :root[data-theme="light"] .video-title,
-        :root[data-theme="light"] .spec-item strong {
+        :root[data-theme="light"] .spec-item strong,
+        :root[data-theme="light"] .rating-value {
             color: #172033;
         }
 
@@ -1356,8 +1407,9 @@
                     <div class="gallery-thumbs" id="thumbsContainer"></div>
                 </div>
                 <div style="display: flex; flex-direction: column;">
-                    <h2 id="modalCarTitle" style="color: #fff; font-size: 24px; margin-bottom: 6px;"></h2>
-                    <div style="font-size: 24px; color: var(--primary-color); font-weight: 800;" id="modalCarPrice"></div>
+                    <h2 id="modalCarTitle" style="color: #fff; font-size: 24px; margin-bottom: 4px;"></h2>
+                    <div id="modalCarRating"></div>
+                    <div style="font-size: 24px; color: var(--primary-color); font-weight: 800; margin-top: 8px;" id="modalCarPrice"></div>
                     
                     <div class="specs-grid">
                         <div class="spec-item"><span>Год выпуска</span><strong id="modalCarYear"></strong></div>
@@ -1545,12 +1597,14 @@
 
     <!-- Скрипт -->
     <script>
-        const cars = [
+        const initialCars = [
             {
                 id: 1,
                 title: "BMW M4 Competition",
                 numericPrice: 65000000,
                 price: "65 000 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/67/671d8e1c-d699-4870-a91a-a2d11d680080/4-750x470.jpg",
                     "https://alaps-photos-kl.kcdn.kz/webp/67/671d8e1c-d699-4870-a91a-a2d11d680080/3-750x470.jpg",
@@ -1563,6 +1617,8 @@
                 title: "Hyundai Sonata N-Line",
                 numericPrice: 18000000,
                 price: "18 000 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/55/55ed39bf-bfd3-4af6-a63d-a26df76038c7/1-750x470.jpg",
                     "https://alaps-photos-kl.kcdn.kz/webp/55/55ed39bf-bfd3-4af6-a63d-a26df76038c7/2-750x470.jpg",
@@ -1575,6 +1631,8 @@
                 title: "Mercedes-AMG GT",
                 numericPrice: 120000000,
                 price: "120 000 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/d5/d54d5c6a-f95a-49f9-9f54-a2ce8317f205/5-1200x752.webp",
                     "https://alaps-photos-kl.kcdn.kz/webp/d5/d54d5c6a-f95a-49f9-9f54-a2ce8317f205/9-750x470.jpg"
@@ -1586,6 +1644,8 @@
                 title: "Porsche 911 Carrera",
                 numericPrice: 160000000,
                 price: "160 000 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/7e/7e259c58-1a36-4096-b76e-a107545bab12/3-1200x752.webp",
                     "https://alaps-photos-kl.kcdn.kz/webp/38/38a78e49-832a-457c-962c-a2ce1511c95e/4-750x470.jpg"
@@ -1597,6 +1657,8 @@
                 title: "Tesla Model S Plaid",
                 numericPrice: 38890000,
                 price: "38 890 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/3e/3e0bf1d4-b50a-49a8-8977-a05ad696db19/1-750x470.jpg",
                     "https://alaps-photos-kl.kcdn.kz/webp/3e/3e0bf1d4-b50a-49a8-8977-a05ad696db19/4-750x470.jpg"
@@ -1608,6 +1670,8 @@
                 title: "Toyota Land Cruiser 300",
                 numericPrice: 60000000,
                 price: "60 000 000 ₸",
+                rating: 0,
+                votes: 0,
                 images: [
                     "https://alaps-photos-kl.kcdn.kz/webp/cd/cdc3d610-c97d-4c34-9f48-a2d1f439b327/1-1200x752.webp",
                     "https://alaps-photos-kl.kcdn.kz/webp/cd/cdc3d610-c97d-4c34-9f48-a2d1f439b327/2-750x470.jpg"
@@ -1615,6 +1679,23 @@
                 year: "2021", engine: "3.5 л Twin-Turbo", power: "415 л.с.", maxSpeed: "210 км/ч", transmission: "Автомат", drive: "Полный"
             }
         ];
+
+        function getSavedCarsData() {
+            try {
+                const stored = localStorage.getItem('autodrive-cars-data');
+                return stored ? JSON.parse(stored) : initialCars;
+            } catch (e) {
+                return initialCars;
+            }
+        }
+
+        function saveCarsData(data) {
+            try {
+                localStorage.setItem('autodrive-cars-data', JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        let cars = getSavedCarsData();
 
         function setTheme(theme) {
             document.documentElement.dataset.theme = theme;
@@ -1692,6 +1773,97 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // РЕНДЕРИНГ ЗВЕЗД С УЧЕТОМ ЛОКАЛЬНОГО ГОЛОСА И ВЗАИМОДЕЙСТВИЯ (HOVER)
+        function createRatingHTML(carId, rating, votes) {
+            const userVoteKey = `autodrive_voted_car_${carId}`;
+            const userSavedScore = localStorage.getItem(userVoteKey);
+            const userScore = userSavedScore ? parseInt(userSavedScore) : 0;
+
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                // Если пользователь проголосовал — горят жёлтым его выбранные звёзды
+                const isFilled = (userScore > 0 && i <= userScore) ? 'filled' : '';
+                starsHTML += `
+                    <span class="star ${isFilled}" 
+                          data-star="${i}"
+                          onclick="rateCar(event, ${carId}, ${i})" 
+                          onmouseenter="handleStarHover(${carId}, ${i})"
+                          onmouseleave="handleStarLeave(${carId})"
+                          title="Оценить на ${i} из 5">&#9733;</span>`;
+            }
+
+            const ratingDisplay = votes > 0 ? rating.toFixed(1) : 'Оцените авто';
+            const countDisplay = votes > 0 ? `(${votes})` : '';
+
+            return `
+                <div class="rating-wrapper" id="ratingWrapper_${carId}">
+                    <div class="stars-container" id="starsContainer_${carId}">${starsHTML}</div>
+                    <span class="rating-value">${ratingDisplay}</span>
+                    <span class="rating-count">${countDisplay}</span>
+                </div>
+            `;
+        }
+
+        // ПОДСВЕТКА ЗВЕЗД ПРИ НАВЕДЕНИИ
+        function handleStarHover(carId, hoveredScore) {
+            const userVoteKey = `autodrive_voted_car_${carId}`;
+            if (localStorage.getItem(userVoteKey)) return; // Если уже проголосовал, hover отключается
+
+            const container = document.getElementById(`starsContainer_${carId}`);
+            if (!container) return;
+
+            const stars = container.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < hoveredScore) {
+                    star.classList.add('hovered');
+                } else {
+                    star.classList.remove('hovered');
+                }
+            });
+        }
+
+        // ВОЗВРАТ ЗВЕЗД В ОБЫЧНОЕ СОСТОЯНИЕ ПРИ УХОДЕ КУРСОРA
+        function handleStarLeave(carId) {
+            const container = document.getElementById(`starsContainer_${carId}`);
+            if (!container) return;
+
+            const stars = container.querySelectorAll('.star');
+            stars.forEach(star => star.classList.remove('hovered'));
+        }
+
+        // ФУНКЦИЯ ГОЛОСОВАНИЯ
+        function rateCar(event, carId, score) {
+            event.stopPropagation(); // Предотвращаем открытие модального окна
+
+            const userVotedKey = `autodrive_voted_car_${carId}`;
+            if (localStorage.getItem(userVotedKey)) {
+                alert('Вы уже поставили оценку этому автомобилю!');
+                return;
+            }
+
+            const car = cars.find(c => c.id === carId);
+            if (!car) return;
+
+            // Вычисление нового рейтинга
+            const totalScore = (car.rating * car.votes) + score;
+            car.votes += 1;
+            car.rating = totalScore / car.votes;
+
+            // Сохраняем голос в локальное хранилище
+            localStorage.setItem(userVotedKey, score);
+            saveCarsData(cars);
+
+            // Мгновенное обновление каталога и модального окна
+            filterCars();
+            
+            const modal = document.getElementById('carDetailsModal');
+            if (modal && modal.style.display === 'flex') {
+                document.getElementById('modalCarRating').innerHTML = createRatingHTML(car.id, car.rating, car.votes);
+            }
+
+            alert(`Спасибо! Вы поставили оценку ${score} из 5.`);
+        }
+
         function renderCars(list) {
             const grid = document.getElementById('carGrid');
             grid.innerHTML = list.map(car => `
@@ -1701,6 +1873,7 @@
                     </div>
                     <div class="car-details">
                         <div class="car-title">${car.title}</div>
+                        ${createRatingHTML(car.id, car.rating, car.votes)}
                         <div class="car-price">${car.price}</div>
                         <ul class="car-specs">
                             <li><span>Год выпуска</span> <span>${car.year}</span></li>
@@ -1739,6 +1912,7 @@
             if (!car) return;
 
             document.getElementById('modalCarTitle').innerText = car.title;
+            document.getElementById('modalCarRating').innerHTML = createRatingHTML(car.id, car.rating, car.votes);
             document.getElementById('modalCarPrice').innerText = car.price;
             document.getElementById('modalCarYear').innerText = car.year;
             document.getElementById('modalCarPower').innerText = car.power;
