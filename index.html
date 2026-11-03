@@ -1512,6 +1512,8 @@
         </div>
     </div>
 
+    <audio id="backgroundMusic" src="background-music.wav" preload="auto" loop></audio>
+
     <button class="music-toggle" id="musicToggle" type="button" onclick="toggleBackgroundMusic()" aria-label="Включить фоновую музыку" aria-pressed="false" title="Включить фоновую музыку">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="m16 9 5 6m0-6-5 6"></path></svg>
         <span>Включить музыку</span>
@@ -1778,13 +1780,8 @@
         } catch (error) {}
         setTheme(savedTheme);
 
-        let ambientMusicContext = null;
-        let ambientMusicMaster = null;
-        let ambientMusicTimer = null;
-        let ambientMusicNextPhraseTime = 0;
+        const backgroundMusic = document.getElementById('backgroundMusic');
         let ambientMusicEnabled = false;
-        let ambientMusicStarting = false;
-        const ambientMusicVoices = new Set();
 
         function updateMusicToggle(enabled, label = '') {
             const button = document.getElementById('musicToggle');
@@ -1799,110 +1796,23 @@
                 : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="m16 9 5 6m0-6-5 6"></path></svg><span>' + text + '</span>';
         }
 
-        function scheduleAmbientTone(midiNote, startTime, duration, volume, type, attack) {
-            const context = ambientMusicContext;
-            if (!context || startTime + duration <= context.currentTime) return;
-
-            const oscillator = context.createOscillator();
-            const envelope = context.createGain();
-            const endTime = startTime + duration;
-            const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
-
-            oscillator.type = type;
-            oscillator.frequency.setValueAtTime(frequency, startTime);
-            envelope.gain.setValueAtTime(0.0001, startTime);
-            envelope.gain.exponentialRampToValueAtTime(volume, startTime + attack);
-            envelope.gain.exponentialRampToValueAtTime(0.0001, endTime);
-            oscillator.connect(envelope);
-            envelope.connect(ambientMusicMaster);
-            oscillator.onended = () => {
-                ambientMusicVoices.delete(oscillator);
-                oscillator.disconnect();
-                envelope.disconnect();
-            };
-            ambientMusicVoices.add(oscillator);
-            oscillator.start(startTime);
-            oscillator.stop(endTime + 0.04);
-        }
-
-        function scheduleAmbientPhrase(startTime, beat) {
-            const chords = [
-                [50, 57, 60, 65],
-                [46, 53, 57, 62],
-                [41, 48, 53, 60],
-                [48, 55, 60, 62]
-            ];
-            const melodyOrder = [2, 1, 3, 2];
-
-            chords.forEach((chord, bar) => {
-                const barStart = startTime + bar * beat * 4;
-                chord.forEach(note => scheduleAmbientTone(note, barStart, beat * 3.92, 0.055, 'sine', 0.7));
-                scheduleAmbientTone(chord[0] - 12, barStart, beat * 3.8, 0.12, 'sine', 0.9);
-
-                for (let beatIndex = 0; beatIndex < 4; beatIndex++) {
-                    const note = chord[melodyOrder[(beatIndex + bar) % melodyOrder.length]] + 12;
-                    scheduleAmbientTone(note, barStart + beatIndex * beat, beat * 0.72, 0.12, 'sine', 0.035);
-                }
-            });
-        }
-
-        function scheduleAmbientMusic() {
-            const beat = 60 / 78;
-            const phraseDuration = beat * 16;
-            const horizon = ambientMusicContext.currentTime + 1.2;
-
-            while (ambientMusicNextPhraseTime < horizon) {
-                scheduleAmbientPhrase(ambientMusicNextPhraseTime, beat);
-                ambientMusicNextPhraseTime += phraseDuration;
-            }
-        }
-
         async function startBackgroundMusic() {
-            if (ambientMusicStarting || ambientMusicEnabled) return;
-            ambientMusicStarting = true;
-
+            if (ambientMusicEnabled) return;
             try {
-                if (!ambientMusicContext) {
-                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                    if (!AudioContextClass) throw new Error('Web Audio is not supported');
-                    ambientMusicContext = new AudioContextClass();
-                    ambientMusicMaster = ambientMusicContext.createGain();
-                    ambientMusicMaster.gain.value = 0;
-                    ambientMusicMaster.connect(ambientMusicContext.destination);
-                }
-
-                await ambientMusicContext.resume();
-                if (ambientMusicContext.state !== 'running') throw new Error('Audio is unavailable');
-
-                const now = ambientMusicContext.currentTime;
-                ambientMusicMaster.gain.cancelScheduledValues(now);
-                ambientMusicMaster.gain.setValueAtTime(ambientMusicMaster.gain.value, now);
-                ambientMusicMaster.gain.linearRampToValueAtTime(0.22, now + 1.2);
-                ambientMusicNextPhraseTime = now + 0.08;
+                backgroundMusic.volume = 0.65;
+                await backgroundMusic.play();
                 ambientMusicEnabled = true;
                 updateMusicToggle(true);
-                scheduleAmbientMusic();
-                ambientMusicTimer = window.setInterval(scheduleAmbientMusic, 250);
-            } finally {
-                ambientMusicStarting = false;
+            } catch (error) {
+                updateMusicToggle(false, 'Не удалось включить');
+                throw error;
             }
         }
 
         function stopBackgroundMusic() {
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
             ambientMusicEnabled = false;
-            window.clearInterval(ambientMusicTimer);
-            ambientMusicTimer = null;
-
-            if (ambientMusicContext && ambientMusicMaster) {
-                const now = ambientMusicContext.currentTime;
-                ambientMusicMaster.gain.cancelScheduledValues(now);
-                ambientMusicMaster.gain.setValueAtTime(ambientMusicMaster.gain.value, now);
-                ambientMusicMaster.gain.linearRampToValueAtTime(0, now + 0.3);
-                ambientMusicVoices.forEach(voice => {
-                    try { voice.stop(now + 0.32); } catch (error) {}
-                });
-            }
-
             updateMusicToggle(false);
         }
 
@@ -1912,7 +1822,7 @@
                 return;
             }
 
-            startBackgroundMusic().catch(() => updateMusicToggle(false, 'Нажмите, чтобы включить'));
+            startBackgroundMusic().catch(() => {});
         }
 
         document.addEventListener('DOMContentLoaded', () => {
