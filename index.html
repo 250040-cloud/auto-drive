@@ -1242,6 +1242,161 @@
             .tab-btn { flex: 1 1 30%; max-width: 30%; padding: 8px 4px; font-size: 11px; }
             .music-toggle { left: 14px; bottom: 14px; min-height: 46px; padding: 0 14px; font-size: 12px; }
         }
+
+        /* Опросник по подбору автомобиля */
+        .quiz-shell {
+            max-width: 880px;
+            margin: 0 auto;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            background: linear-gradient(145deg, var(--bg-card), rgba(15, 23, 42, 0.92));
+            box-shadow: var(--shadow-soft);
+        }
+
+        .quiz-panel { padding: clamp(24px, 5vw, 52px); }
+        .quiz-panel[hidden] { display: none !important; }
+        .quiz-intro { text-align: center; }
+        .quiz-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            color: var(--primary-color);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+        .quiz-eyebrow::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.7);
+        }
+        .quiz-intro h3, .quiz-result h3 {
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-size: clamp(25px, 4vw, 36px);
+            line-height: 1.2;
+            letter-spacing: -0.8px;
+        }
+        .quiz-intro p, .quiz-result p {
+            max-width: 590px;
+            margin: 0 auto 24px;
+            color: var(--text-muted);
+        }
+        .quiz-intro-mark {
+            display: grid;
+            place-items: center;
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 24px;
+            border: 1px solid rgba(255, 59, 48, 0.28);
+            border-radius: 24px;
+            background: rgba(255, 59, 48, 0.12);
+            color: var(--primary-color);
+            font-size: 34px;
+        }
+        .quiz-start-btn { width: auto; min-width: 190px; }
+        .quiz-topline {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .quiz-progress-track {
+            height: 7px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: rgba(148, 163, 184, 0.18);
+        }
+        .quiz-progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--primary-gradient);
+            transition: width 0.35s ease;
+        }
+        .quiz-question-title {
+            margin-bottom: 22px;
+            color: var(--text-main);
+            font-size: clamp(21px, 3vw, 27px);
+            line-height: 1.35;
+        }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .quiz-option {
+            min-height: 90px;
+            padding: 17px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 13px;
+            background: rgba(15, 23, 42, 0.46);
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+        .quiz-option:hover { transform: translateY(-2px); border-color: rgba(255, 59, 48, 0.55); }
+        .quiz-option[aria-checked="true"] {
+            border-color: var(--primary-color);
+            background: rgba(255, 59, 48, 0.13);
+            box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.12);
+        }
+        .quiz-option strong { display: block; margin-bottom: 4px; font-size: 15px; }
+        .quiz-option span { display: block; color: var(--text-muted); font-size: 13px; line-height: 1.45; }
+        .quiz-option:focus-visible, .quiz-controls button:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 3px; }
+        .quiz-feedback { min-height: 22px; margin: 12px 0 10px; color: var(--text-muted); font-size: 13px; }
+        .quiz-controls { display: flex; justify-content: space-between; gap: 12px; }
+        .quiz-controls button { width: auto; min-width: 125px; }
+        .quiz-controls button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+        .quiz-result { text-align: center; }
+        .quiz-result-badge {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 7px 13px;
+            border: 1px solid rgba(255, 59, 48, 0.25);
+            border-radius: 999px;
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--primary-color);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .quiz-recommendation {
+            max-width: 580px;
+            margin: 24px auto;
+            padding: 22px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.42);
+        }
+        .quiz-recommendation .quiz-car-name { margin-bottom: 7px; color: var(--primary-color); font-size: 22px; font-weight: 800; }
+        .quiz-recommendation p { margin-bottom: 0; }
+        .quiz-result-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+        .quiz-result-actions button { width: auto; min-width: 180px; }
+
+        :root[data-theme="light"] .quiz-shell { background: linear-gradient(145deg, #fff, #edf2f8); }
+        :root[data-theme="light"] .quiz-option,
+        :root[data-theme="light"] .quiz-recommendation { background: rgba(241, 245, 249, 0.9); }
+        :root[data-theme="light"] .quiz-option[aria-checked="true"] { background: rgba(255, 59, 48, 0.09); }
+
+        @media (max-width: 600px) {
+            header nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 14px; }
+            header nav a { margin: 0; white-space: nowrap; }
+            #page-quiz.active-page ~ .music-toggle { display: none; }
+            .quiz-shell { border-radius: 16px; }
+            .quiz-options { grid-template-columns: 1fr; }
+            .quiz-option { min-height: 74px; }
+            .quiz-controls button, .quiz-result-actions button { flex: 1; min-width: 0; }
+        }
+
     </style>
 </head>
 <body>
@@ -1251,6 +1406,7 @@
         <button class="tab-btn active-tab" id="tab-home" onclick="switchPage('home')">1. Каталог авто</button>
         <button class="tab-btn" id="tab-credit" onclick="switchPage('credit')">2. Кредит & Trade-In</button>
         <button class="tab-btn" id="tab-video" onclick="switchPage('video')">3. Видеообзоры 🎥</button>
+        <button class="tab-btn" id="tab-quiz" onclick="switchPage('quiz')">4. Подбор авто</button>
         <div class="theme-switcher theme-switcher-mobile" role="group" aria-label="Переключение темы">
             <button type="button" data-theme-option="light" aria-label="Включить светлую тему" aria-pressed="false" title="Светлая тема">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
@@ -1277,6 +1433,7 @@
             <a onclick="switchPage('home')">Главная</a>
             <a onclick="switchPage('credit')">Рассчитать кредит</a>
             <a onclick="switchPage('video')">Видеообзоры</a>
+            <a onclick="switchPage('quiz')">Подбор авто</a>
             <a onclick="openTestDriveModal()">Записаться на тест-драйв</a>
             <a href="tel:+77777007700" style="color: var(--primary-color); font-weight: 700;">+7 (777) 700-77-00</a>
         </nav>
@@ -1453,6 +1610,43 @@
         </main>
     </div>
 
+    <!-- ВКЛАДКА №4: ИНТЕРАКТИВНЫЙ ОПРОСНИК -->
+    <div id="page-quiz" class="page">
+        <main class="container">
+            <h2 class="section-title">Подбор автомобиля</h2>
+            <p class="section-subtitle">Ответьте на 6 вопросов, чтобы найти модель AutoDrive под ваш ритм жизни</p>
+
+            <div class="quiz-shell">
+                <section class="quiz-panel quiz-intro" id="quizIntro">
+                    <div class="quiz-intro-mark" aria-hidden="true">✦</div>
+                    <span class="quiz-eyebrow">Персональный подбор</span>
+                    <h3>Какой автомобиль подходит именно вам?</h3>
+                    <p>Расскажите, как вы ездите и что цените в автомобиле. Мы подберём вариант из каталога AutoDrive.</p>
+                    <button type="button" class="btn quiz-start-btn" onclick="startAutoQuiz()">Начать опрос</button>
+                </section>
+
+                <section class="quiz-panel" id="quizQuestionCard" hidden>
+                    <div class="quiz-topline">
+                        <span id="quizStepLabel">Вопрос 1 из 6</span>
+                        <span>Подбор AutoDrive</span>
+                    </div>
+                    <div class="quiz-progress-track" role="progressbar" aria-label="Прогресс опроса" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+                        <div class="quiz-progress-bar" id="quizProgressBar"></div>
+                    </div>
+                    <h3 class="quiz-question-title" id="quizQuestionTitle"></h3>
+                    <div class="quiz-options" id="quizOptions" role="radiogroup" aria-labelledby="quizQuestionTitle"></div>
+                    <p class="quiz-feedback" id="quizFeedback" aria-live="polite">Выберите один вариант ответа.</p>
+                    <div class="quiz-controls">
+                        <button type="button" class="btn btn-secondary" id="quizBackBtn" onclick="previousQuizQuestion()">Назад</button>
+                        <button type="button" class="btn" id="quizNextBtn" onclick="nextQuizQuestion()" disabled>Далее</button>
+                    </div>
+                </section>
+
+                <section class="quiz-panel quiz-result" id="quizResult" aria-live="polite" hidden></section>
+            </div>
+        </main>
+    </div>
+
     <!-- Модальное окно деталей авто -->
     <div class="modal" id="carDetailsModal">
         <div class="modal-content modal-content-large">
@@ -1511,8 +1705,6 @@
             </form>
         </div>
     </div>
-
-    <audio id="backgroundMusic" src="background-music.wav" preload="auto" loop></audio>
 
     <button class="music-toggle" id="musicToggle" type="button" onclick="toggleBackgroundMusic()" aria-label="Включить фоновую музыку" aria-pressed="false" title="Включить фоновую музыку">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="m16 9 5 6m0-6-5 6"></path></svg>
@@ -1780,8 +1972,13 @@
         } catch (error) {}
         setTheme(savedTheme);
 
-        const backgroundMusic = document.getElementById('backgroundMusic');
+        let ambientMusicContext = null;
+        let ambientMusicMaster = null;
+        let ambientMusicTimer = null;
+        let ambientMusicNextPhraseTime = 0;
         let ambientMusicEnabled = false;
+        let ambientMusicStarting = false;
+        const ambientMusicVoices = new Set();
 
         function updateMusicToggle(enabled, label = '') {
             const button = document.getElementById('musicToggle');
@@ -1796,23 +1993,110 @@
                 : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="m16 9 5 6m0-6-5 6"></path></svg><span>' + text + '</span>';
         }
 
+        function scheduleAmbientTone(midiNote, startTime, duration, volume, type, attack) {
+            const context = ambientMusicContext;
+            if (!context || startTime + duration <= context.currentTime) return;
+
+            const oscillator = context.createOscillator();
+            const envelope = context.createGain();
+            const endTime = startTime + duration;
+            const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
+
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, startTime);
+            envelope.gain.setValueAtTime(0.0001, startTime);
+            envelope.gain.exponentialRampToValueAtTime(volume, startTime + attack);
+            envelope.gain.exponentialRampToValueAtTime(0.0001, endTime);
+            oscillator.connect(envelope);
+            envelope.connect(ambientMusicMaster);
+            oscillator.onended = () => {
+                ambientMusicVoices.delete(oscillator);
+                oscillator.disconnect();
+                envelope.disconnect();
+            };
+            ambientMusicVoices.add(oscillator);
+            oscillator.start(startTime);
+            oscillator.stop(endTime + 0.04);
+        }
+
+        function scheduleAmbientPhrase(startTime, beat) {
+            const chords = [
+                [50, 57, 60, 65],
+                [46, 53, 57, 62],
+                [41, 48, 53, 60],
+                [48, 55, 60, 62]
+            ];
+            const melodyOrder = [2, 1, 3, 2];
+
+            chords.forEach((chord, bar) => {
+                const barStart = startTime + bar * beat * 4;
+                chord.forEach(note => scheduleAmbientTone(note, barStart, beat * 3.92, 0.055, 'sine', 0.7));
+                scheduleAmbientTone(chord[0] - 12, barStart, beat * 3.8, 0.12, 'sine', 0.9);
+
+                for (let beatIndex = 0; beatIndex < 4; beatIndex++) {
+                    const note = chord[melodyOrder[(beatIndex + bar) % melodyOrder.length]] + 12;
+                    scheduleAmbientTone(note, barStart + beatIndex * beat, beat * 0.72, 0.12, 'sine', 0.035);
+                }
+            });
+        }
+
+        function scheduleAmbientMusic() {
+            const beat = 60 / 78;
+            const phraseDuration = beat * 16;
+            const horizon = ambientMusicContext.currentTime + 1.2;
+
+            while (ambientMusicNextPhraseTime < horizon) {
+                scheduleAmbientPhrase(ambientMusicNextPhraseTime, beat);
+                ambientMusicNextPhraseTime += phraseDuration;
+            }
+        }
+
         async function startBackgroundMusic() {
-            if (ambientMusicEnabled) return;
+            if (ambientMusicStarting || ambientMusicEnabled) return;
+            ambientMusicStarting = true;
+
             try {
-                backgroundMusic.volume = 0.65;
-                await backgroundMusic.play();
+                if (!ambientMusicContext) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContextClass) throw new Error('Web Audio is not supported');
+                    ambientMusicContext = new AudioContextClass();
+                    ambientMusicMaster = ambientMusicContext.createGain();
+                    ambientMusicMaster.gain.value = 0;
+                    ambientMusicMaster.connect(ambientMusicContext.destination);
+                }
+
+                await ambientMusicContext.resume();
+                if (ambientMusicContext.state !== 'running') throw new Error('Audio is unavailable');
+
+                const now = ambientMusicContext.currentTime;
+                ambientMusicMaster.gain.cancelScheduledValues(now);
+                ambientMusicMaster.gain.setValueAtTime(ambientMusicMaster.gain.value, now);
+                ambientMusicMaster.gain.linearRampToValueAtTime(0.22, now + 1.2);
+                ambientMusicNextPhraseTime = now + 0.08;
                 ambientMusicEnabled = true;
                 updateMusicToggle(true);
-            } catch (error) {
-                updateMusicToggle(false, 'Не удалось включить');
-                throw error;
+                scheduleAmbientMusic();
+                ambientMusicTimer = window.setInterval(scheduleAmbientMusic, 250);
+            } finally {
+                ambientMusicStarting = false;
             }
         }
 
         function stopBackgroundMusic() {
-            backgroundMusic.pause();
-            backgroundMusic.currentTime = 0;
             ambientMusicEnabled = false;
+            window.clearInterval(ambientMusicTimer);
+            ambientMusicTimer = null;
+
+            if (ambientMusicContext && ambientMusicMaster) {
+                const now = ambientMusicContext.currentTime;
+                ambientMusicMaster.gain.cancelScheduledValues(now);
+                ambientMusicMaster.gain.setValueAtTime(ambientMusicMaster.gain.value, now);
+                ambientMusicMaster.gain.linearRampToValueAtTime(0, now + 0.3);
+                ambientMusicVoices.forEach(voice => {
+                    try { voice.stop(now + 0.32); } catch (error) {}
+                });
+            }
+
             updateMusicToggle(false);
         }
 
@@ -1822,7 +2106,7 @@
                 return;
             }
 
-            startBackgroundMusic().catch(() => {});
+            startBackgroundMusic().catch(() => updateMusicToggle(false, 'Нажмите, чтобы включить'));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2125,6 +2409,184 @@
             const name = document.getElementById('userName').value;
             alert(`Спасибо, ${name}! Вы успешно записаны на тест-драйв.`);
             closeTestDriveModal();
+        }
+
+
+        const autoQuizQuestions = [
+            {
+                question: 'Что для вас важнее всего в автомобиле?',
+                options: [
+                    { title: 'Яркие эмоции за рулём', detail: 'Мощность, скорость и выразительный дизайн', type: 'sport' },
+                    { title: 'Комфорт на каждый день', detail: 'Удобные поездки по городу и в путешествиях', type: 'comfort' },
+                    { title: 'Практичность и простор', detail: 'Место для семьи, багажа и активного отдыха', type: 'adventure' },
+                    { title: 'Технологии будущего', detail: 'Электропривод, инновации и быстрый отклик', type: 'tech' }
+                ]
+            },
+            {
+                question: 'Где вы чаще всего будете ездить?',
+                options: [
+                    { title: 'Загородные трассы', detail: 'Хочу чувствовать динамику на свободной дороге', type: 'sport' },
+                    { title: 'Город и ежедневные маршруты', detail: 'Ценю плавность хода и удобство парковки', type: 'comfort' },
+                    { title: 'Дальние поездки и природа', detail: 'Нужна уверенность на разных дорогах', type: 'adventure' },
+                    { title: 'В основном город', detail: 'Хочу тихую и современную поездку', type: 'tech' }
+                ]
+            },
+            {
+                question: 'Какой формат кузова вам ближе?',
+                options: [
+                    { title: 'Спортивное купе', detail: 'Низкий силуэт и характерный внешний вид', type: 'sport' },
+                    { title: 'Элегантный седан', detail: 'Сдержанный стиль и удобный салон', type: 'comfort' },
+                    { title: 'Вместительный внедорожник', detail: 'Высокая посадка и больше пространства', type: 'adventure' },
+                    { title: 'Современный электрокар', detail: 'Лаконичный дизайн и новые технологии', type: 'tech' }
+                ]
+            },
+            {
+                question: 'Кто чаще всего будет в машине?',
+                options: [
+                    { title: 'Я и ещё один пассажир', detail: 'На первом месте впечатления от вождения', type: 'sport' },
+                    { title: 'Обычно я один или вдвоём', detail: 'Иногда беру пассажиров и езжу всей семьёй', type: 'comfort' },
+                    { title: 'Семья или компания', detail: 'Важно, чтобы всем было просторно', type: 'adventure' },
+                    { title: 'В основном я сам', detail: 'Хочу личный автомобиль с умными функциями', type: 'tech' }
+                ]
+            },
+            {
+                question: 'Какая характеристика убедит вас выбрать авто?',
+                options: [
+                    { title: 'Мощный двигатель', detail: 'Разгон и спортивная управляемость', type: 'sport' },
+                    { title: 'Комфортная комплектация', detail: 'Удобные опции и сбалансированный характер', type: 'comfort' },
+                    { title: 'Полный привод', detail: 'Надёжность и уверенность в поездках', type: 'adventure' },
+                    { title: 'Электрический запас хода', detail: 'Тихая езда и передовые решения', type: 'tech' }
+                ]
+            },
+            {
+                question: 'Что вы хотите почувствовать после покупки?',
+                options: [
+                    { title: 'Каждая поездка как событие', detail: 'Автомобиль должен вдохновлять', type: 'sport' },
+                    { title: 'Спокойствие и удобство', detail: 'Нужен надёжный спутник на каждый день', type: 'comfort' },
+                    { title: 'Свободу выбирать маршрут', detail: 'Хочу быть готовым к любым планам', type: 'adventure' },
+                    { title: 'Ощущение нового поколения', detail: 'Хочу попробовать будущее уже сейчас', type: 'tech' }
+                ]
+            }
+        ];
+
+        const autoQuizRecommendations = {
+            sport: {
+                carId: 3,
+                category: 'Для драйва и эмоций',
+                title: 'Mercedes-AMG GT',
+                description: 'Спортивный характер, мощный двигатель и выразительный дизайн для тех, кто любит быть за рулём.'
+            },
+            comfort: {
+                carId: 2,
+                category: 'Для комфорта каждый день',
+                title: 'Hyundai Sonata N-Line',
+                description: 'Стильный седан с современным оснащением и удобным характером для городских и загородных поездок.'
+            },
+            adventure: {
+                carId: 6,
+                category: 'Для путешествий и свободы',
+                title: 'Toyota Land Cruiser 300',
+                description: 'Просторный внедорожник с полным приводом, готовый к семейным поездкам и разным маршрутам.'
+            },
+            tech: {
+                carId: 5,
+                category: 'Для технологий будущего',
+                title: 'Tesla Model S Plaid',
+                description: 'Электрический автомобиль с впечатляющей динамикой и технологичным подходом к каждой поездке.'
+            }
+        };
+
+        let autoQuizIndex = 0;
+        let autoQuizAnswers = [];
+
+        function startAutoQuiz() {
+            autoQuizIndex = 0;
+            autoQuizAnswers = [];
+            document.getElementById('quizIntro').hidden = true;
+            document.getElementById('quizResult').hidden = true;
+            document.getElementById('quizQuestionCard').hidden = false;
+            renderAutoQuizQuestion();
+        }
+
+        function renderAutoQuizQuestion() {
+            const current = autoQuizQuestions[autoQuizIndex];
+            const selected = autoQuizAnswers[autoQuizIndex];
+            const progress = ((autoQuizIndex + 1) / autoQuizQuestions.length) * 100;
+
+            document.getElementById('quizStepLabel').textContent = `Вопрос ${autoQuizIndex + 1} из ${autoQuizQuestions.length}`;
+            document.querySelector('.quiz-progress-track').setAttribute('aria-valuenow', String(autoQuizIndex + 1));
+            document.getElementById('quizProgressBar').style.width = `${progress}%`;
+            document.getElementById('quizQuestionTitle').textContent = current.question;
+            document.getElementById('quizFeedback').textContent = selected === undefined ? 'Выберите один вариант ответа.' : 'Ответ сохранён. Можно продолжать.';
+            document.getElementById('quizBackBtn').disabled = autoQuizIndex === 0;
+            document.getElementById('quizNextBtn').disabled = selected === undefined;
+            document.getElementById('quizNextBtn').textContent = autoQuizIndex === autoQuizQuestions.length - 1 ? 'Показать результат' : 'Далее';
+            document.getElementById('quizOptions').innerHTML = current.options.map((option, index) => `
+                <button type="button" class="quiz-option" role="radio" aria-checked="${selected === index}" onclick="selectAutoQuizAnswer(${index})">
+                    <strong>${option.title}</strong>
+                    <span>${option.detail}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectAutoQuizAnswer(optionIndex) {
+            autoQuizAnswers[autoQuizIndex] = optionIndex;
+            renderAutoQuizQuestion();
+        }
+
+        function previousQuizQuestion() {
+            if (autoQuizIndex === 0) return;
+            autoQuizIndex -= 1;
+            renderAutoQuizQuestion();
+        }
+
+        function nextQuizQuestion() {
+            if (autoQuizAnswers[autoQuizIndex] === undefined) return;
+            if (autoQuizIndex < autoQuizQuestions.length - 1) {
+                autoQuizIndex += 1;
+                renderAutoQuizQuestion();
+                return;
+            }
+            showAutoQuizResult();
+        }
+
+        function showAutoQuizResult() {
+            const scores = { sport: 0, comfort: 0, adventure: 0, tech: 0 };
+            autoQuizAnswers.forEach((answerIndex, questionIndex) => {
+                const type = autoQuizQuestions[questionIndex].options[answerIndex].type;
+                scores[type] += 1;
+            });
+            const highestScore = Math.max(...Object.values(scores));
+            const tiedTypes = Object.keys(scores).filter(type => scores[type] === highestScore);
+            const winner = [...autoQuizAnswers].reverse().map((answerIndex, questionIndexFromEnd) => {
+                const questionIndex = autoQuizAnswers.length - 1 - questionIndexFromEnd;
+                return autoQuizQuestions[questionIndex].options[answerIndex].type;
+            }).find(type => tiedTypes.includes(type));
+            const recommendation = autoQuizRecommendations[winner];
+
+            document.getElementById('quizQuestionCard').hidden = true;
+            const result = document.getElementById('quizResult');
+            result.innerHTML = `
+                <span class="quiz-eyebrow">Ваш результат</span>
+                <h3>Похоже, вам подойдёт этот автомобиль</h3>
+                <div class="quiz-recommendation">
+                    <span class="quiz-result-badge">${recommendation.category}</span>
+                    <div class="quiz-car-name">${recommendation.title}</div>
+                    <p>${recommendation.description}</p>
+                </div>
+                <div class="quiz-result-actions">
+                    <button type="button" class="btn" onclick="openRecommendedCar(${recommendation.carId})">Посмотреть автомобиль</button>
+                    <button type="button" class="btn btn-secondary" onclick="startAutoQuiz()">Пройти ещё раз</button>
+                </div>
+            `;
+            result.hidden = false;
+        }
+
+        function openRecommendedCar(carId) {
+            document.getElementById('quizResult').hidden = true;
+            document.getElementById('quizIntro').hidden = false;
+            switchPage('home');
+            window.setTimeout(() => openCarModal(carId), 250);
         }
 
         function scrollToTop() {
