@@ -1163,10 +1163,25 @@
         :root[data-theme="light"] .theme-switcher button[aria-pressed="true"] { color: #fff; }
         :root[data-theme="light"] .theme-switcher button:focus-visible { outline-color: #172033; }
 
+        /* СНЕГ */
+        #snowCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1450;
+            transition: opacity 0.4s ease;
+        }
+
+        #snowCanvas.snow-hidden {
+            opacity: 0;
+        }
+
+        .snow-toggle,
         .music-toggle {
             position: fixed;
             left: 24px;
-            bottom: 24px;
             z-index: 1601;
             display: inline-flex;
             align-items: center;
@@ -1185,17 +1200,28 @@
             transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
+        .snow-toggle {
+            bottom: 84px;
+        }
+
+        .music-toggle {
+            bottom: 24px;
+        }
+
+        .snow-toggle:hover,
         .music-toggle:hover {
             transform: translateY(-3px);
             background: var(--primary-gradient);
             box-shadow: 0 10px 28px rgba(255, 59, 48, 0.35);
         }
 
+        .snow-toggle:focus-visible,
         .music-toggle:focus-visible {
             outline: 2px solid #fff;
             outline-offset: 3px;
         }
 
+        .snow-toggle svg,
         .music-toggle svg {
             width: 20px;
             height: 20px;
@@ -1207,12 +1233,14 @@
             flex: 0 0 auto;
         }
 
+        :root[data-theme="light"] .snow-toggle,
         :root[data-theme="light"] .music-toggle {
             background: rgba(255, 255, 255, 0.95);
             color: #172033;
             border-color: rgba(15, 23, 42, 0.14);
         }
 
+        :root[data-theme="light"] .snow-toggle:hover,
         :root[data-theme="light"] .music-toggle:hover {
             background: var(--primary-gradient);
             color: #fff;
@@ -1240,7 +1268,10 @@
 
         @media (max-width: 600px) {
             .tab-btn { flex: 1 1 30%; max-width: 30%; padding: 8px 4px; font-size: 11px; }
-            .music-toggle { left: 14px; bottom: 14px; min-height: 46px; padding: 0 14px; font-size: 12px; }
+            .snow-toggle,
+            .music-toggle { left: 14px; min-height: 46px; padding: 0 14px; font-size: 12px; }
+            .snow-toggle { bottom: 68px; }
+            .music-toggle { bottom: 14px; }
         }
 
         /* Опросник по подбору автомобиля */
@@ -1390,6 +1421,7 @@
         @media (max-width: 600px) {
             header nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 14px; }
             header nav a { margin: 0; white-space: nowrap; }
+            #page-quiz.active-page ~ .snow-toggle,
             #page-quiz.active-page ~ .music-toggle { display: none; }
             .quiz-shell { border-radius: 16px; }
             .quiz-options { grid-template-columns: 1fr; }
@@ -1400,6 +1432,8 @@
     </style>
 </head>
 <body>
+
+    <canvas id="snowCanvas" aria-hidden="true"></canvas>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar">
@@ -1706,6 +1740,11 @@
         </div>
     </div>
 
+    <button class="snow-toggle" id="snowToggle" type="button" onclick="toggleSnow()" aria-label="Выключить снег" aria-pressed="true" title="Выключить снег">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M4.93 4.93l14.14 14.14M2 12h20M4.93 19.07L19.07 4.93"></path><path d="m10 4 2 2 2-2M10 20l2-2 2 2M4 10l2 2-2 2M20 10l-2 2 2 2"></path></svg>
+        <span>Выключить снег</span>
+    </button>
+
     <button class="music-toggle" id="musicToggle" type="button" onclick="toggleBackgroundMusic()" aria-label="Включить фоновую музыку" aria-pressed="false" title="Включить фоновую музыку">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="m16 9 5 6m0-6-5 6"></path></svg>
         <span>Включить музыку</span>
@@ -1972,6 +2011,171 @@
         } catch (error) {}
         setTheme(savedTheme);
 
+        /* СНЕГ */
+        let snowEnabled = true;
+        let snowAnimationId = null;
+        let snowflakes = [];
+
+        function updateSnowToggle(enabled) {
+            const button = document.getElementById('snowToggle');
+            if (!button) return;
+
+            const text = enabled ? 'Выключить снег' : 'Включить снег';
+            button.setAttribute('aria-pressed', String(enabled));
+            button.setAttribute('aria-label', text);
+            button.title = text;
+            button.querySelector('span').textContent = text;
+        }
+
+        function createSnowflake(width, height, randomY = true) {
+            return {
+                x: Math.random() * width,
+                y: randomY ? Math.random() * height : -10,
+                radius: 1.5 + Math.random() * 2.7,
+                speedY: 0.35 + Math.random() * 0.65,
+                driftAmplitude: 0.25 + Math.random() * 0.45,
+                driftSpeed: 0.008 + Math.random() * 0.012,
+                angle: Math.random() * Math.PI * 2,
+                opacity: 0.45 + Math.random() * 0.45
+            };
+        }
+
+        function resizeSnowCanvas() {
+            const canvas = document.getElementById('snowCanvas');
+            if (!canvas) return;
+
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const targetCount = Math.min(85, Math.max(35, Math.floor(width / 18)));
+            if (snowflakes.length === 0) {
+                snowflakes = Array.from({ length: targetCount }, () => createSnowflake(width, height, true));
+            } else if (snowflakes.length < targetCount) {
+                while (snowflakes.length < targetCount) {
+                    snowflakes.push(createSnowflake(width, height, true));
+                }
+            } else if (snowflakes.length > targetCount) {
+                snowflakes.length = targetCount;
+            }
+        }
+
+        function renderSnowFrame() {
+            if (!snowEnabled) return;
+
+            const canvas = document.getElementById('snowCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const isLightTheme = document.documentElement.dataset.theme === 'light';
+
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < snowflakes.length; i++) {
+                const flake = snowflakes[i];
+                flake.angle += flake.driftSpeed;
+                flake.y += flake.speedY;
+                flake.x += Math.sin(flake.angle) * flake.driftAmplitude;
+
+                if (flake.y > height + 10) {
+                    flake.y = -10;
+                    flake.x = Math.random() * width;
+                }
+                if (flake.x > width + 10) {
+                    flake.x = -10;
+                } else if (flake.x < -10) {
+                    flake.x = width + 10;
+                }
+
+                ctx.beginPath();
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                ctx.fillStyle = isLightTheme
+                    ? `rgba(255, 255, 255, ${Math.min(1, flake.opacity + 0.1)})`
+                    : `rgba(255, 255, 255, ${flake.opacity})`;
+                ctx.fill();
+
+                if (isLightTheme) {
+                    ctx.lineWidth = 0.8;
+                    ctx.strokeStyle = `rgba(100, 116, 139, ${flake.opacity * 0.55})`;
+                    ctx.stroke();
+                }
+            }
+
+            snowAnimationId = window.requestAnimationFrame(renderSnowFrame);
+        }
+
+        function startSnow() {
+            const canvas = document.getElementById('snowCanvas');
+            if (!canvas) return;
+
+            snowEnabled = true;
+            canvas.classList.remove('snow-hidden');
+            updateSnowToggle(true);
+            resizeSnowCanvas();
+
+            if (!snowAnimationId) {
+                snowAnimationId = window.requestAnimationFrame(renderSnowFrame);
+            }
+
+            try {
+                localStorage.setItem('autodrive-snow', 'on');
+            } catch (error) {}
+        }
+
+        function stopSnow() {
+            const canvas = document.getElementById('snowCanvas');
+            snowEnabled = false;
+            updateSnowToggle(false);
+
+            if (snowAnimationId) {
+                window.cancelAnimationFrame(snowAnimationId);
+                snowAnimationId = null;
+            }
+
+            if (canvas) {
+                canvas.classList.add('snow-hidden');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            }
+
+            try {
+                localStorage.setItem('autodrive-snow', 'off');
+            } catch (error) {}
+        }
+
+        function toggleSnow() {
+            if (snowEnabled) {
+                stopSnow();
+            } else {
+                startSnow();
+            }
+        }
+
+        function initSnow() {
+            let savedSnow = 'on';
+            try {
+                savedSnow = localStorage.getItem('autodrive-snow') === 'off' ? 'off' : 'on';
+            } catch (error) {}
+
+            window.addEventListener('resize', () => {
+                if (snowEnabled) resizeSnowCanvas();
+            });
+
+            if (savedSnow === 'on') {
+                startSnow();
+            } else {
+                stopSnow();
+            }
+        }
+
         let ambientMusicContext = null;
         let ambientMusicMaster = null;
         let ambientMusicTimer = null;
@@ -2113,6 +2317,7 @@
             renderCars(cars);
             initSelects();
             calculateCredit();
+            initSnow();
 
             const parallaxBg = document.getElementById('parallaxBg');
 
